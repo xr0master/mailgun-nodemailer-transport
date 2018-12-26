@@ -1,11 +1,19 @@
 {
   "name": "mailgun-nodemailer-transport",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "description": "Mailgun API V3 and Nodemailer v4. The plugin is very small, optimized and written in TypeScript",
   "private": false,
   "author": "Sergey Khomushin <xr0master@gmail.com>",
   "license": "MIT",
   "main": "dist/MailgunTransport.js",
   "types": "dist/MailgunTransport.d.ts",
+  "keywords": [
+    "mailgun",
+    "nodemailer",
+    "transport",
+    "mailgun nodemailer transport",
+    "nodemailer mailgun transport"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/xr0master/mailgun-nodemailer-transport.git"
