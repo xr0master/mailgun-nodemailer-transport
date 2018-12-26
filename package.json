@@ -1,0 +1,41 @@
+{
+  "name": "mailgun-nodemailer-transport",
+  "version": "1.0.0",
+  "private": false,
+  "author": "Sergey Khomushin <xr0master@gmail.com>",
+  "license": "MIT",
+  "main": "dist/MailgunTransport.js",
+  "types": "dist/MailgunTransport.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xr0master/mailgun-nodemailer-transport.git"
+  },
+  "scripts": {
+    "_build-ts": "tsc",
+    "_clean": "rm -rf ./dist",
+    "build": "npm run _clean && npm run tslint && npm run _build-ts",
+    "test": "jest --notify --forceExit --coverage --verbose --config ./jest.conf.json",
+    "tslint": "tslint -c tslint.json -p tsconfig.json -t stylish"
+  },
+  "dependencies": {
+    "form-data": "2.3.3"
+  },
+  "peerDependencies": {
+    "nodemailer": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/form-data": "2.2.1",
+    "@types/jest": "23.3.9",
+    "@types/node": "10.12.2",
+    "@types/nodemailer": "4.6.5",
+    "jest": "23.6.0",
+    "nodemailer": "4.7.0",
+    "ts-jest": "23.10.4",
+    "tslint": "5.11.0",
+    "tslint-eslint-rules": "5.4.0",
+    "typescript": "3.1.6"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "globals": {
+    "ts-jest": {
+      "diagnostics": {
+        "warnOnly": true
+      }
+    }
+  },
+  "collectCoverage": true,
+  "coverageDirectory": "coverage",
+  "transform": {
+    "^.+\\.ts?$": "ts-jest"
+  },
+  "testRegex": "(/__tests__/.*|(\\.|/)(spec))\\.(ts?)$",
+  "moduleFileExtensions": [
+    "ts",
+    "js"
+  ],
+  "modulePaths": [
+    "src"
+  ],
+  "testPathIgnorePatterns": ["/node_modules/"],
+  "testEnvironment": "node",
+  "preset": "ts-jest",
+  "testMatch": null
+}
