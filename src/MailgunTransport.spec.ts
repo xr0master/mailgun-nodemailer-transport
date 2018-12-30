@@ -91,7 +91,7 @@ test('test the Mailgun error', (done: Function) => {
     subject: 'Mailgun Transport Error'
   }).then((info) => {
     throw info;
-  }).catch((error) => {
+  }, (error) => {
     expect(error).toBeDefined();
     done();
   });
