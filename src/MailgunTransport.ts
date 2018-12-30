@@ -11,7 +11,7 @@ const CONTENT_KEYS: Array<string> = ['subject', 'text', 'html'];
 export interface Options {
   auth: {
     domain: string;
-    apiKey: string
+    apiKey: string;
   };
 }
 
