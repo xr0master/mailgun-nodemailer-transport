@@ -1,7 +1,7 @@
 {
   "name": "mailgun-nodemailer-transport",
-  "version": "1.0.1",
-  "description": "Mailgun API V3 and Nodemailer v4. The plugin is very small, optimized and written in TypeScript",
+  "version": "1.0.2",
+  "description": "Mailgun API V3 and Nodemailer v4+. The plugin is very small, optimized and written in TypeScript",
   "private": false,
   "author": "Sergey Khomushin <xr0master@gmail.com>",
   "license": "MIT",
@@ -29,19 +29,19 @@
     "form-data": "2.3.3"
   },
   "peerDependencies": {
-    "nodemailer": "^4.0.0"
+    "nodemailer": ">=4.0.0"
   },
   "devDependencies": {
     "@types/form-data": "2.2.1",
-    "@types/jest": "23.3.9",
-    "@types/node": "10.12.2",
+    "@types/jest": "23.3.11",
+    "@types/node": "10.12.18",
     "@types/nodemailer": "4.6.5",
     "jest": "23.6.0",
-    "nodemailer": "4.7.0",
-    "ts-jest": "23.10.4",
-    "tslint": "5.11.0",
+    "nodemailer": "5.0.0",
+    "ts-jest": "23.10.5",
+    "tslint": "5.12.0",
     "tslint-eslint-rules": "5.4.0",
-    "typescript": "3.1.6"
+    "typescript": "3.2.2"
   },
   "engines": {
     "node": ">=6.0.0"
