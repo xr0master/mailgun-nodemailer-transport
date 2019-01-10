@@ -1,6 +1,6 @@
 {
   "name": "mailgun-nodemailer-transport",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Mailgun API V3 and Nodemailer v4+. The plugin is very small, optimized and written in TypeScript",
   "private": false,
   "author": "Sergey Khomushin <xr0master@gmail.com>",
