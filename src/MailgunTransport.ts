@@ -76,7 +76,10 @@ export class MailgunTransport implements Transport {
   private submitForm(form: FormData): Promise<any> {
     return new Promise((resolve, reject) => {
       form.submit(this.requestConfig, (err, res) => {
-        if (err) return reject(err);
+        if (err) {
+          res.resume();
+          return reject(err);
+        }
 
         let chunks: Array<any> = [];
 
