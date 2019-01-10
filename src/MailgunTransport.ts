@@ -24,7 +24,7 @@ export class MailgunTransport implements Transport {
 
   constructor(options: Options) {
     this.requestConfig = {
-      protocol: 'http:',
+      protocol: 'https:',
       hostname: `api.mailgun.net`,
       path: `/v3/${options.auth.domain}/messages`,
       auth: `api:${options.auth.apiKey}`
