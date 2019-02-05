@@ -24,6 +24,38 @@ test('test the html', (done: Function) => {
   });
 });
 
+test('test the double send', (done: Function) => {
+  expect.assertions(1);
+
+  const transport = createTransport(new MailgunTransport(<Options>{
+    auth: {
+      domain: 'sandbox.mailgun.org',
+      apiKey: 'API_KEY-HERE'
+    }
+  }));
+
+  transport.sendMail({
+    from: 'sergey@emailjs.com',
+    to: 'sergey@emailjs.com',
+    subject: 'Mailgun Transport HTML Test',
+    html: '<!DOCTYPE html><html><body><b>This is HTML content</b></body></html>',
+    text: 'This is HTML content'
+  }).then(() => {
+    transport.sendMail({
+      from: 'sergey@emailjs.com',
+      to: 'sergey@emailjs.com',
+      subject: 'Mailgun Transport Second HTML Test',
+      html: '<!DOCTYPE html><html><body><b>This is HTML content</b></body></html>',
+      text: 'This is Second HTML content'
+    }).then((info) => {
+      expect(info).toBeDefined();
+      done();
+    });
+  }).catch((error) => {
+    throw error;
+  });
+});
+
 test('test the attachments path', (done: Function) => {
   expect.assertions(1);
 
