@@ -1,4 +1,5 @@
 import {request} from 'https';
+import {ClientRequest, IncomingMessage} from 'http';
 import {Transport, SendMailOptions} from 'nodemailer';
 import * as FormData from 'form-data';
 
@@ -76,14 +77,14 @@ export class MailgunTransport implements Transport {
 
   private submitForm(form: FormData): Promise<any> {
     return new Promise((resolve, reject) => {
-      let req = request(Object.assign({
+      let req: ClientRequest = request(Object.assign({
         method: 'POST',
         headers: form.getHeaders()
       }, this.requestConfig));
 
       form.pipe(req);
 
-      req.on('response', function(res) {
+      req.on('response', (res: IncomingMessage) => {
         let chunks: Array<any> = [];
 
         res.on('data', (chunk) => chunks.push(chunk));
