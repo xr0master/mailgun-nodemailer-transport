@@ -11,6 +11,7 @@ const ADDRESS_KEYS: Array<string> = ['from', 'to', 'cc', 'bcc', 'replyTo'];
 const CONTENT_KEYS: Array<string> = ['subject', 'text', 'html'];
 
 export interface Options {
+  hostname?: string;
   auth: {
     domain: string;
     apiKey: string;
@@ -27,7 +28,7 @@ export class MailgunTransport implements Transport {
   constructor(options: Options) {
     this.requestConfig = {
       protocol: 'https:',
-      hostname: `api.mailgun.net`,
+      hostname: options.hostname || 'api.mailgun.net',
       path: `/v3/${options.auth.domain}/messages`,
       auth: `api:${options.auth.apiKey}`
     };
