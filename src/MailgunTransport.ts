@@ -131,3 +131,5 @@ export class MailgunTransport implements Transport {
     });
   }
 }
+
+export default MailgunTransport;
