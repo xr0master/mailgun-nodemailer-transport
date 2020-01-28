@@ -66,7 +66,7 @@ export class MailgunTransport implements Transport {
     if (!Array.isArray(data.attachments)) return;
 
     data.attachments.forEach((attachment) => {
-      let buffer: Buffer = Buffer.from(<string>attachment.content, attachment.encoding);
+      let buffer: Buffer = Buffer.from(attachment.content as string, attachment.encoding as BufferEncoding);
 
       form.append('inline', buffer, {
         filename: attachment.cid,
