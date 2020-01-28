@@ -128,3 +128,24 @@ test('test the Mailgun error', (done: Function) => {
     done();
   });
 });
+
+test('test request error', (done: Function) => {
+  expect.assertions(1);
+
+  createTransport(new MailgunTransport(<Options>{
+    hostname: 'localhost',
+    auth: {
+      domain: 'sandbox.mailgun.org',
+      apiKey: 'API_KEY-HERE'
+    }
+  })).sendMail({
+    from: 'sergey@emailjs.com',
+    to: 'Sergey <sergey@emailjs.com>',
+    subject: 'Mailgun Transport Error'
+  }).then((info) => {
+    throw info;
+  }, (error) => {
+    expect(error).toBeDefined();
+    done();
+  });
+});
