@@ -104,6 +104,7 @@ export class MailgunTransport implements Transport {
           reject(error);
         });
       });
+
       req.on('error', (error) => {
         reject(error);
       })
