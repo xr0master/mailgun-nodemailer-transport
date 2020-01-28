@@ -2,13 +2,16 @@ import {createTransport} from 'nodemailer';
 import {Attachment} from 'nodemailer/lib/mailer';
 import {MailgunTransport, Options} from './MailgunTransport';
 
+const API_KEY: string = 'API_KEY_HERE';
+const DOMAIN: string = 'DOMAIN_HERE';
+
 test('test the html', (done: Function) => {
   expect.assertions(1);
 
   createTransport(new MailgunTransport(<Options>{
     auth: {
-      domain: 'sandbox.mailgun.org',
-      apiKey: 'API_KEY-HERE'
+      domain: DOMAIN,
+      apiKey: API_KEY
     }
   })).sendMail({
     from: 'sergey@emailjs.com',
@@ -29,8 +32,8 @@ test('test the double send', (done: Function) => {
 
   const transport = createTransport(new MailgunTransport(<Options>{
     auth: {
-      domain: 'sandbox.mailgun.org',
-      apiKey: 'API_KEY-HERE'
+      domain: DOMAIN,
+      apiKey: API_KEY
     }
   }));
 
@@ -61,8 +64,8 @@ test('test the attachments path', (done: Function) => {
 
   createTransport(new MailgunTransport(<Options>{
     auth: {
-      domain: 'sandbox.mailgun.org',
-      apiKey: 'API_KEY-HERE'
+      domain: DOMAIN,
+      apiKey: API_KEY
     }
   })).sendMail({
     from: 'sergey@emailjs.com',
@@ -86,8 +89,8 @@ test('test the attachments base64', (done: Function) => {
 
   createTransport(new MailgunTransport(<Options>{
     auth: {
-      domain: 'sandbox.mailgun.org',
-      apiKey: 'API_KEY-HERE'
+      domain: DOMAIN,
+      apiKey: API_KEY
     }
   })).sendMail({
     from: 'sergey@emailjs.com',
@@ -114,8 +117,8 @@ test('test the Mailgun error', (done: Function) => {
 
   createTransport(new MailgunTransport(<Options>{
     auth: {
-      domain: 'sandbox.mailgun.org',
-      apiKey: 'API_KEY-HERE'
+      domain: DOMAIN,
+      apiKey: API_KEY
     }
   })).sendMail({
     from: 'sergey@emailjs.com',
@@ -135,8 +138,8 @@ test('test request error', (done: Function) => {
   createTransport(new MailgunTransport(<Options>{
     hostname: 'localhost',
     auth: {
-      domain: 'sandbox.mailgun.org',
-      apiKey: 'API_KEY-HERE'
+      domain: DOMAIN,
+      apiKey: API_KEY
     }
   })).sendMail({
     from: 'sergey@emailjs.com',
