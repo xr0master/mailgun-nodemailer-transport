@@ -1,14 +1,22 @@
 import {request} from 'https';
-import {ClientRequest, IncomingMessage} from 'http';
-import {Transport, SendMailOptions} from 'nodemailer';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 
-const TRANSFORM_FIELDS: Object = {
-  replyTo: 'h:Reply-To'
-};
+import type {SubmitOptions} from 'form-data';
+import type {ClientRequest, IncomingMessage} from 'http';
+import type {SentMessageInfo, Transport, SendMailOptions} from 'nodemailer';
+import type MailMessage from 'nodemailer/lib/mailer/mail-message';
 
-const ADDRESS_KEYS: Array<string> = ['from', 'to', 'cc', 'bcc', 'replyTo'];
-const CONTENT_KEYS: Array<string> = ['subject', 'text', 'html'];
+const TRANSFORM_FIELDS = {
+  replyTo: 'h:Reply-To',
+} as const;
+
+const ADDRESS_KEYS = ['from', 'to', 'cc', 'bcc', 'replyTo'] as const;
+const CONTENT_KEYS = ['subject', 'text', 'html'] as const;
+
+interface Address {
+  name: string;
+  address: string;
+}
 
 export interface Options {
   hostname?: string;
@@ -18,12 +26,16 @@ export interface Options {
   };
 }
 
+const combineTarget = (target: Address): string => {
+  return target.name ? `${target.name} <${target.address}>` : target.address;
+};
+
 export class MailgunTransport implements Transport {
 
-  private requestConfig: FormData.SubmitOptions;
+  private readonly requestConfig: SubmitOptions;
 
-  public name: string = 'MailgunTransport';
-  public version: string = 'N/A';
+  public name = 'MailgunTransport';
+  public version = 'N/A';
 
   constructor(options: Options) {
     this.requestConfig = {
@@ -34,10 +46,6 @@ export class MailgunTransport implements Transport {
     };
   }
 
-  private combineTarget(target: {name: string; address: string}): string {
-    return target.name ? `${target.name} <${target.address}>` : target.address;
-  }
-
   private appendAddresses(form: FormData, data: SendMailOptions): void {
     ADDRESS_KEYS.forEach(target => {
       if (!data[target]) return;
@@ -45,9 +53,9 @@ export class MailgunTransport implements Transport {
       let value: string;
 
       if (Array.isArray(data[target])) {
-        value = data[target].map(this.combineTarget).join(',');
+        value = (data[target] as Address[]).map(combineTarget).join(',');
       } else {
-        value = this.combineTarget(data[target]);
+        value = combineTarget(data[target] as Address);
       }
 
       form.append(TRANSFORM_FIELDS[target] || target, value);
@@ -62,17 +70,35 @@ export class MailgunTransport implements Transport {
     });
   }
 
+  private appendImages(form: FormData, data: SendMailOptions): void {
+    if (!Array.isArray(data.attachments)) return;
+
+    data.attachments.forEach((attachment) => {
+      if (attachment.contentType.startsWith('image/')) {
+        let buffer: Buffer = Buffer.from(attachment.content as string, attachment.encoding as BufferEncoding);
+
+        form.append('inline', buffer, {
+          filename: attachment.cid,
+          contentType: attachment.contentType,
+          knownLength: buffer.length
+        });
+      }
+    });
+  }
+
   private appendAttachments(form: FormData, data: SendMailOptions): void {
     if (!Array.isArray(data.attachments)) return;
 
     data.attachments.forEach((attachment) => {
-      let buffer: Buffer = Buffer.from(attachment.content as string, attachment.encoding as BufferEncoding);
+      if (!attachment.contentType.startsWith('image/')) {
+        let buffer: Buffer = Buffer.from(attachment.content as string, attachment.encoding as BufferEncoding);
 
-      form.append('inline', buffer, {
-        filename: attachment.cid,
-        contentType: attachment.contentType,
-        knownLength: buffer.length
-      });
+        form.append('attachment', buffer, {
+          filename: attachment.filename || attachment.cid,
+          contentType: attachment.contentType,
+          knownLength: buffer.length
+        });
+      }
     });
   }
 
@@ -111,15 +137,16 @@ export class MailgunTransport implements Transport {
     });
   }
 
-  public send(mail: any, done: Function): void {
+  public send(mail: MailMessage, done: (err: Error | null, info?: SentMessageInfo) => void): void {
     setImmediate(() => {
       mail.normalize((error, data: SendMailOptions) => {
         if (error) return done(error);
 
-        let form: FormData = new FormData();
+        const form = new FormData();
 
         this.appendAddresses(form, data);
         this.appendContent(form, data);
+        this.appendImages(form, data);
         this.appendAttachments(form, data);
 
         this.submitForm(form)
