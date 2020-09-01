@@ -1,21 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2018",
     "module": "commonjs",
     "typeRoots": ["node_modules/@types"],
     "lib": ["esnext"],
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
+    "esModuleInterop": true,
     "declaration": true,
     "noImplicitAny": false,
     "noLib": false,
-    "preserveConstEnums": true,
+    "preserveConstEnums": false,
     "suppressImplicitAnyIndexErrors": true,
     "allowUnusedLabels": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": false,
+    "noUnusedParameters": true,
     "removeComments": true,
     "sourceMap": false,
     "outDir": "dist",
@@ -25,11 +24,7 @@
     "src/**/*"
   ],
   "exclude": [
-    "node_modules",
     "**/*.spec.ts"
   ],
-  "compileOnSave": false,
-  "atom": {
-    "rewriteTsconfig": false
-  }
+  "compileOnSave": false
 }
