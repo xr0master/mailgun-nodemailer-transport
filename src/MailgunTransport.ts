@@ -7,7 +7,7 @@ import type {SentMessageInfo, Transport, SendMailOptions} from 'nodemailer';
 import type MailMessage from 'nodemailer/lib/mailer/mail-message';
 
 const TRANSFORM_FIELDS = {
-  replyTo: 'h:Reply-To',
+  replyTo: 'h:Reply-To'
 } as const;
 
 const ADDRESS_KEYS = ['from', 'to', 'cc', 'bcc', 'replyTo'] as const;
