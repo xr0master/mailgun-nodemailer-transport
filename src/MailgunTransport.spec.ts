@@ -4,18 +4,17 @@ import {MailgunTransport} from './MailgunTransport';
 
 const API_KEY: string = 'API_KEY_HERE';
 const DOMAIN: string = 'DOMAIN_HERE';
+const EMAIL: string = 'sergey@example.com';
 
-test('test the html', (done: Function) => {
-  expect.assertions(1);
-
+test('test the html', (done) => {
   createTransport(new MailgunTransport({
     auth: {
       domain: DOMAIN,
       apiKey: API_KEY
     }
   })).sendMail({
-    from: 'sergey@emailjs.com',
-    to: 'sergey@emailjs.com',
+    from: EMAIL,
+    to: EMAIL,
     subject: 'Mailgun Transport HTML Test',
     html: '<!DOCTYPE html><html><body><b>This is HTML content</b></body></html>',
     text: 'This is HTML content'
@@ -28,8 +27,6 @@ test('test the html', (done: Function) => {
 });
 
 test('test the double send', (done) => {
-  expect.assertions(1);
-
   const transport = createTransport(new MailgunTransport({
     auth: {
       domain: DOMAIN,
@@ -38,15 +35,15 @@ test('test the double send', (done) => {
   }));
 
   transport.sendMail({
-    from: 'sergey@emailjs.com',
-    to: 'sergey@emailjs.com',
+    from: EMAIL,
+    to: EMAIL,
     subject: 'Mailgun Transport HTML Test',
     html: '<!DOCTYPE html><html><body><b>This is HTML content</b></body></html>',
     text: 'This is HTML content'
   }).then(() => {
     transport.sendMail({
-      from: 'sergey@emailjs.com',
-      to: 'sergey@emailjs.com',
+      from: EMAIL,
+      to: EMAIL,
       subject: 'Mailgun Transport Second HTML Test',
       html: '<!DOCTYPE html><html><body><b>This is HTML content</b></body></html>',
       text: 'This is Second HTML content'
@@ -60,16 +57,14 @@ test('test the double send', (done) => {
 });
 
 test('test the attachments path', (done) => {
-  expect.assertions(1);
-
   createTransport(new MailgunTransport({
     auth: {
       domain: DOMAIN,
       apiKey: API_KEY
     }
   })).sendMail({
-    from: 'sergey@emailjs.com',
-    to: 'Sergey <sergey@emailjs.com>',
+    from: EMAIL,
+    to: `Sergey <${EMAIL}>`,
     subject: 'Mailgun Transport Attachment Test',
     html: '<!DOCTYPE html><html><body><p>It should be PDF file</p></body></html>',
     attachments: [{
@@ -85,16 +80,14 @@ test('test the attachments path', (done) => {
 });
 
 test('test the attachments base64', (done) => {
-  expect.assertions(1);
-
   createTransport(new MailgunTransport({
     auth: {
       domain: DOMAIN,
       apiKey: API_KEY
     }
   })).sendMail({
-    from: 'sergey@emailjs.com',
-    to: 'Sergey <sergey@emailjs.com>',
+    from: EMAIL,
+    to: `Sergey <${EMAIL}>`,
     subject: 'Mailgun Transport Attachment Base64 Test',
     html: '<!DOCTYPE html><html><body><img src="cid:cat" alt="cat"></body></html>',
     attachments: [{
@@ -113,16 +106,14 @@ test('test the attachments base64', (done) => {
 });
 
 test('test the Mailgun error', (done) => {
-  expect.assertions(1);
-
   createTransport(new MailgunTransport({
     auth: {
       domain: DOMAIN,
       apiKey: API_KEY
     }
   })).sendMail({
-    from: 'sergey@emailjs.com',
-    to: 'Sergey <sergey@emailjs.com>',
+    from: EMAIL,
+    to: `Sergey <${EMAIL}>`,
     subject: 'Mailgun Transport Error'
   }).then((info) => {
     throw info;
@@ -133,8 +124,6 @@ test('test the Mailgun error', (done) => {
 });
 
 test('test request error', (done) => {
-  expect.assertions(1);
-
   createTransport(new MailgunTransport({
     hostname: 'localhost',
     auth: {
@@ -142,8 +131,8 @@ test('test request error', (done) => {
       apiKey: API_KEY
     }
   })).sendMail({
-    from: 'sergey@emailjs.com',
-    to: 'Sergey <sergey@emailjs.com>',
+    from: EMAIL,
+    to: `Sergey <${EMAIL}>`,
     subject: 'Mailgun Transport Error'
   }).then((info) => {
     throw info;
