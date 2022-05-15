@@ -33,6 +33,7 @@ const combineTarget = (target: Address): string => {
 export class MailgunTransport implements Transport {
 
   private readonly requestConfig: SubmitOptions;
+  private cids: Record<string, boolean> = {};
 
   public name = 'MailgunTransport';
   public version = 'N/A';
@@ -44,6 +45,17 @@ export class MailgunTransport implements Transport {
       path: `/v3/${options.auth.domain}/messages`,
       auth: `api:${options.auth.apiKey}`
     };
+  }
+
+  private findEmbeddedAttachments(data: SendMailOptions): void {
+    const content = (data.text || data.html) as string;
+    const matchInlineImages = [...content.matchAll(/["\[]cid:(.*?)["\]]/g)];
+
+    this.cids = matchInlineImages.reduce((result, match) => {
+      result[match[1]] = true;
+
+      return result;
+    }, {});
   }
 
   private appendAddresses(form: FormData, data: SendMailOptions): void {
@@ -74,7 +86,7 @@ export class MailgunTransport implements Transport {
     if (!Array.isArray(data.attachments)) return;
 
     data.attachments.forEach((attachment) => {
-      if (attachment.contentType.startsWith('image/')) {
+      if (attachment.contentType.startsWith('image/') && this.cids[attachment.cid]) {
         let buffer: Buffer = Buffer.from(attachment.content as string, attachment.encoding as BufferEncoding);
 
         form.append('inline', buffer, {
@@ -90,7 +102,7 @@ export class MailgunTransport implements Transport {
     if (!Array.isArray(data.attachments)) return;
 
     data.attachments.forEach((attachment) => {
-      if (!attachment.contentType.startsWith('image/')) {
+      if (!(attachment.contentType.startsWith('image/') && this.cids[attachment.cid])) {
         let buffer: Buffer = Buffer.from(attachment.content as string, attachment.encoding as BufferEncoding);
 
         form.append('attachment', buffer, {
@@ -141,6 +153,8 @@ export class MailgunTransport implements Transport {
     setImmediate(() => {
       mail.normalize((error, data: SendMailOptions) => {
         if (error) return done(error);
+
+        this.findEmbeddedAttachments(data);
 
         const form = new FormData();
 
