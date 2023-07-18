@@ -18,12 +18,23 @@ interface Address {
   address: string;
 }
 
+interface Proxy {
+  protocol: string;
+  host: string;
+  port: number;
+}
+
 export interface Options {
   hostname?: string;
+  proxy?: Proxy;
   auth: {
     domain: string;
     apiKey: string;
   };
+}
+
+interface RequestConfig extends SubmitOptions {
+  path?: string;
 }
 
 const combineTarget = (target: Address): string => {
@@ -32,18 +43,27 @@ const combineTarget = (target: Address): string => {
 
 export class MailgunTransport implements Transport {
 
-  private readonly requestConfig: SubmitOptions;
+  private readonly requestConfig: RequestConfig;
   private cids: Record<string, boolean> = {};
 
   public name = 'MailgunTransport';
   public version = 'N/A';
 
   constructor(options: Options) {
-    this.requestConfig = {
+    const targetHostname = options.hostname || 'api.mailgun.net';
+    const targetPath = `/v3/${options.auth.domain}/messages`;
+    const auth = `api:${options.auth.apiKey}`;
+    this.requestConfig = options.proxy ? {
+      protocol: ( options.proxy.protocol && options.proxy.protocol.startsWith('https') ) ? 'https:' : 'http:',
+      hostname: options.proxy.host,
+      port: options.proxy.port,
+      path: `${targetHostname}${targetPath}`,
+      auth
+    } : {
       protocol: 'https:',
-      hostname: options.hostname || 'api.mailgun.net',
-      path: `/v3/${options.auth.domain}/messages`,
-      auth: `api:${options.auth.apiKey}`
+      hostname: targetHostname,
+      path: targetPath,
+      auth
     };
   }
 
