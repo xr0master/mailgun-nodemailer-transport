@@ -1,4 +1,5 @@
-import {request} from 'https';
+import {request as requestHttp} from 'http';
+import {request as requestHttps} from 'https';
 import FormData from 'form-data';
 
 import type {SubmitOptions} from 'form-data';
@@ -45,6 +46,7 @@ export class MailgunTransport implements Transport {
 
   private readonly requestConfig: RequestConfig;
   private cids: Record<string, boolean> = {};
+  private isHttp: boolean;
 
   public name = 'MailgunTransport';
   public version = 'N/A';
@@ -53,8 +55,9 @@ export class MailgunTransport implements Transport {
     const targetHostname = options.hostname || 'api.mailgun.net';
     const targetPath = `/v3/${options.auth.domain}/messages`;
     const auth = `api:${options.auth.apiKey}`;
+    this.isHttp = options.proxy && !options.proxy.protocol.startsWith('https');
     this.requestConfig = options.proxy ? {
-      protocol: ( options.proxy.protocol && options.proxy.protocol.startsWith('https') ) ? 'https:' : 'http:',
+      protocol: this.isHttp ? 'http:' : 'https:',
       hostname: options.proxy.host,
       port: options.proxy.port,
       path: `https://${targetHostname}${targetPath}`,
@@ -136,7 +139,7 @@ export class MailgunTransport implements Transport {
 
   private submitForm(form: FormData): Promise<any> {
     return new Promise((resolve, reject) => {
-      let req: ClientRequest = request(Object.assign({
+      let req: ClientRequest = (this.isHttp ? requestHttp : requestHttps)(Object.assign({
         method: 'POST',
         headers: form.getHeaders()
       }, this.requestConfig));

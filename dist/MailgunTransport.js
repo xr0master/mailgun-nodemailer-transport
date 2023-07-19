@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MailgunTransport = void 0;
+const http_1 = require("http");
 const https_1 = require("https");
 const form_data_1 = __importDefault(require("form-data"));
 const TRANSFORM_FIELDS = {
@@ -22,11 +23,12 @@ class MailgunTransport {
         const targetHostname = options.hostname || 'api.mailgun.net';
         const targetPath = `/v3/${options.auth.domain}/messages`;
         const auth = `api:${options.auth.apiKey}`;
+        this.isHttp = options.proxy && !options.proxy.protocol.startsWith('https');
         this.requestConfig = options.proxy ? {
-            protocol: (options.proxy.protocol && options.proxy.protocol.startsWith('https')) ? 'https:' : 'http:',
+            protocol: this.isHttp ? 'http:' : 'https:',
             hostname: options.proxy.host,
             port: options.proxy.port,
-            path: `${targetHostname}${targetPath}`,
+            path: `https://${targetHostname}${targetPath}`,
             auth
         } : {
             protocol: 'https:',
@@ -94,7 +96,7 @@ class MailgunTransport {
     }
     submitForm(form) {
         return new Promise((resolve, reject) => {
-            let req = (0, https_1.request)(Object.assign({
+            let req = (this.isHttp ? http_1.request : https_1.request)(Object.assign({
                 method: 'POST',
                 headers: form.getHeaders()
             }, this.requestConfig));

@@ -16,6 +16,7 @@ export interface Options {
 export declare class MailgunTransport implements Transport {
     private readonly requestConfig;
     private cids;
+    private isHttp;
     name: string;
     version: string;
     constructor(options: Options);
