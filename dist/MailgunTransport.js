@@ -26,9 +26,12 @@ class MailgunTransport {
         this.isHttp = options.proxy && !options.proxy.protocol.startsWith('https');
         this.requestConfig = options.proxy ? {
             protocol: this.isHttp ? 'http:' : 'https:',
-            hostname: options.proxy.host,
+            host: options.proxy.host,
             port: options.proxy.port,
             path: `https://${targetHostname}${targetPath}`,
+            headers: {
+              Host: options.proxy.host
+            },
             auth
         } : {
             protocol: 'https:',
