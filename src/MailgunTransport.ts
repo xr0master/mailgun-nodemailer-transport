@@ -1,5 +1,5 @@
-import {request as requestHttp} from 'http';
-import {request as requestHttps} from 'https';
+import {request as requestHttp, Agent as httpAgent} from 'http';
+import {request as requestHttps, Agent as httpsAgent} from 'https';
 import FormData from 'form-data';
 
 import type {SubmitOptions} from 'form-data';
@@ -28,6 +28,7 @@ interface Proxy {
 export interface Options {
   hostname?: string;
   proxy?: Proxy;
+  agent?: httpAgent | httpsAgent;
   auth: {
     domain: string;
     apiKey: string;
@@ -55,8 +56,13 @@ export class MailgunTransport implements Transport {
     const targetHostname = options.hostname || 'api.mailgun.net';
     const targetPath = `/v3/${options.auth.domain}/messages`;
     const auth = `api:${options.auth.apiKey}`;
-    this.isHttp = options.proxy && !options.proxy.protocol.startsWith('https');
-    this.requestConfig = options.proxy ? {
+    const agentOptions = options.agent ? {agent: options.agent} : {};
+    this.isHttp =
+      (options.proxy && !options.proxy.protocol.startsWith('https') ) ||
+      (options.agent && options.agent instanceof httpAgent);
+    // proxying via header changes as described here
+    // https://stackoverflow.com/questions/3862813/how-can-i-use-an-http-proxy-with-node-js-http-client
+    this.requestConfig = (!options.agent && options.proxy) ? {
       protocol: this.isHttp ? 'http:' : 'https:',
       host: options.proxy.host,
       port: options.proxy.port,
@@ -65,10 +71,11 @@ export class MailgunTransport implements Transport {
         Host: options.proxy.host
       },
       auth
-    } : {
+    } : {   // proxying via an http/https agent, i.e. node-tunnel
       protocol: 'https:',
       hostname: targetHostname,
       path: targetPath,
+      ...agentOptions,
       auth
     };
   }

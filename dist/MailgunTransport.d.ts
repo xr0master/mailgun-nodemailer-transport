@@ -1,3 +1,6 @@
+/// <reference types="node" />
+import { Agent as httpAgent } from 'http';
+import { Agent as httpsAgent } from 'https';
 import type { SentMessageInfo, Transport } from 'nodemailer';
 import type MailMessage from 'nodemailer/lib/mailer/mail-message';
 interface Proxy {
@@ -8,6 +11,7 @@ interface Proxy {
 export interface Options {
     hostname?: string;
     proxy?: Proxy;
+    agent?: httpAgent | httpsAgent;
     auth: {
         domain: string;
         apiKey: string;

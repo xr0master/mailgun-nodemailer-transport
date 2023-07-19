@@ -23,20 +23,24 @@ class MailgunTransport {
         const targetHostname = options.hostname || 'api.mailgun.net';
         const targetPath = `/v3/${options.auth.domain}/messages`;
         const auth = `api:${options.auth.apiKey}`;
-        this.isHttp = options.proxy && !options.proxy.protocol.startsWith('https');
-        this.requestConfig = options.proxy ? {
+        const agentOptions = options.agent ? { agent: options.agent } : {};
+        this.isHttp =
+            (options.proxy && !options.proxy.protocol.startsWith('https')) ||
+                (options.agent && options.agent instanceof http_1.Agent);
+        this.requestConfig = (!options.agent && options.proxy) ? {
             protocol: this.isHttp ? 'http:' : 'https:',
             host: options.proxy.host,
             port: options.proxy.port,
             path: `https://${targetHostname}${targetPath}`,
             headers: {
-              Host: options.proxy.host
+                Host: options.proxy.host
             },
             auth
         } : {
             protocol: 'https:',
             hostname: targetHostname,
             path: targetPath,
+            ...agentOptions,
             auth
         };
     }
