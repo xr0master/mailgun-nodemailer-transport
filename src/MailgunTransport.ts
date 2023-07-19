@@ -57,7 +57,7 @@ export class MailgunTransport implements Transport {
       protocol: ( options.proxy.protocol && options.proxy.protocol.startsWith('https') ) ? 'https:' : 'http:',
       hostname: options.proxy.host,
       port: options.proxy.port,
-      path: `${targetHostname}${targetPath}`,
+      path: `https://${targetHostname}${targetPath}`,
       auth
     } : {
       protocol: 'https:',
