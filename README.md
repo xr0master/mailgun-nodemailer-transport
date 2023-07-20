@@ -81,6 +81,41 @@ __send attachment and add to content__
   });
 ```
 
+__send email through a proxy using forwarding__
+``` js
+  // same imports as above
+
+  let transporter = nodemailer.createTransport(new MailgunTransport({
+    proxy: {
+      protocol: "http",
+      host: "www.myproxy.com",
+      port: 80
+    }
+    // auth key-value if applicable
+  }));
+
+  // send email as done above
+```
+
+__send an email through a proxy using any http.Agent or https.Agent, .i.e. using `node-tunnel`__
+``` js
+  // same imports as above
+  const tunnel = require('tunnel');
+
+  let transporter = nodemailer.createTransport(new MailgunTransport({
+    // agent can be any instance of http.Agent or https.Agent
+    agent: tunnel.httpsOverHttp({ // or httpOverHttps, httpOverHttp, or httpsOverHttps
+      proxy: {
+        host: "www.myproxy.com",
+        port: 80
+      }
+    })
+    // auth key-value if applicable
+  }));
+
+  // send email as done above
+```
+
 ## License
 
 [MIT](./LICENSE)
