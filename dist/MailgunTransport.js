@@ -33,7 +33,7 @@ class MailgunTransport {
             port: options.proxy.port,
             path: `https://${targetHostname}${targetPath}`,
             headers: {
-                Host: options.proxy.host
+                Host: targetHostname
             },
             auth
         } : {

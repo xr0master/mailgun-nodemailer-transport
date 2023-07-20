@@ -68,7 +68,7 @@ export class MailgunTransport implements Transport {
       port: options.proxy.port,
       path: `https://${targetHostname}${targetPath}`,
       headers: {
-        Host: options.proxy.host
+        Host: targetHostname
       },
       auth
     } : {   // proxying via an http/https agent, i.e. node-tunnel
