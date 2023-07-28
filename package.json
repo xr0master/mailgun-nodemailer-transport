@@ -5,8 +5,8 @@
   "private": false,
   "author": "Sergey Khomushin <xr0master@gmail.com>",
   "license": "MIT",
-  "main": "dist/MailgunTransport.js",
-  "types": "dist/MailgunTransport.d.ts",
+  "main": "build/MailgunTransport.js",
+  "types": "build/MailgunTransport.d.ts",
   "keywords": [
     "mailgun",
     "nodemailer",
