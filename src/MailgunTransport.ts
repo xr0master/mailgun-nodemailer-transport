@@ -133,7 +133,7 @@ export class MailgunTransport implements Transport {
             message: form,
           });
         })
-        .catch((e) => done(e));
+        .catch((e: Error) => done(e));
     });
   }
 }
