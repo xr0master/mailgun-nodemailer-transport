@@ -3,9 +3,8 @@
 
 node_modules/
 coverage/
-dist/
+build/
 .idea/
 *.swp
 .DS_Store
 Thumbs.db
-.env/.env.dev
