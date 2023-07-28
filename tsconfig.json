@@ -1,30 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["esnext"],
+    "target": "ESNext",
+    "module": "CommonJS",
+    "lib": ["ESNext"],
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "useDefineForClassFields": false,
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "noImplicitAny": false,
+    "strict": true,
+    "noImplicitAny": true,
     "noLib": false,
-    "preserveConstEnums": false,
-    "suppressImplicitAnyIndexErrors": true,
+    "skipLibCheck": true,
+    "preserveConstEnums": true,
     "allowUnusedLabels": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "removeComments": true,
+    "removeComments": false,
     "sourceMap": false,
-    "outDir": "dist",
-    "baseUrl": "."
+    "outDir": "build"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "**/*.spec.ts"
-  ],
-  "compileOnSave": false
+  "include": ["src"],
+  "exclude": ["src/**/*.spec.ts"]
 }

@@ -1,11 +1,22 @@
 # Specifies files to intentionally ignore when using Git
 # http://git-scm.com/docs/gitignore
 
+# git ignore
+.github/
 node_modules/
 coverage/
-dist/
 .idea/
 *.swp
 .DS_Store
 Thumbs.db
-.env/.env.dev
+
+# dev files
+.eslintrc.js
+.gitignore
+.npmignore
+jest.config.ts
+tsconfig.json
+
+# source code files
+src/
+test/
