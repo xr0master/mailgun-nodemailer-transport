@@ -1,3 +1,5 @@
+import { Agent as httpAgent } from 'http';
+import { Agent as httpsAgent } from 'https';
 import FormData from 'form-data';
 
 import type { SubmitOptions } from 'form-data';
@@ -20,12 +22,24 @@ interface Address {
   address: string;
 }
 
+interface Proxy {
+  protocol: string;
+  host: string;
+  port: number;
+}
+
 export interface Options {
   hostname?: string;
+  proxy?: Proxy;
+  agent?: httpAgent | httpsAgent;
   auth: {
     domain: string;
     apiKey: string;
   };
+}
+
+interface RequestConfig extends SubmitOptions {
+  path?: string;
 }
 
 const combineTarget = (target: Address): string => {
@@ -33,17 +47,37 @@ const combineTarget = (target: Address): string => {
 };
 
 export class MailgunTransport implements Transport {
-  private readonly requestConfig: SubmitOptions;
+  private readonly requestConfig: RequestConfig;
+  private isHttpProxy: boolean;
 
   public name = 'MailgunTransport';
   public version = 'N/A';
 
   constructor(options: Options) {
-    this.requestConfig = {
-      protocol: 'https:',
-      hostname: options.hostname || 'api.mailgun.net',
-      path: `/v3/${options.auth.domain}/messages`,
-      auth: `api:${options.auth.apiKey}`,
+    const targetHostname = options.hostname || 'api.mailgun.net';
+    const targetPath = `/v3/${options.auth.domain}/messages`;
+    const auth = `api:${options.auth.apiKey}`;
+    const agentOptions = options.agent ? {agent: options.agent} : {};
+    this.isHttpProxy =
+      (!!options.proxy && !options.proxy.protocol.startsWith('https') ) ||
+      (!!options.agent && options.agent instanceof httpAgent);
+    // proxying via header changes as described here
+    // https://stackoverflow.com/questions/3862813/how-can-i-use-an-http-proxy-with-node-js-http-client
+    this.requestConfig = (!options.agent && options.proxy) ? {
+      protocol: this.isHttpProxy ? 'http:' : 'https:',
+      host: options.proxy.host,
+      port: options.proxy.port,
+      path: `https://${targetHostname}${targetPath}`,
+      headers: {
+        Host: targetHostname
+      },
+      auth
+    } : {   // no proxy, or proxy via an http/https agent like node-tunnel or tunnel-agent
+      protocol: 'https:',         // this refers to target, i.e. mailgun api server
+      hostname: targetHostname,
+      path: targetPath,
+      ...agentOptions,
+      auth
     };
   }
 
@@ -110,7 +144,7 @@ export class MailgunTransport implements Transport {
   }
 
   private submitForm(form: FormData): Promise<string> {
-    return postForm(this.requestConfig, form);
+    return postForm(this.requestConfig, form, this.isHttpProxy);
   }
 
   public send(mail: MailMessage, done: DoneCallback): void {

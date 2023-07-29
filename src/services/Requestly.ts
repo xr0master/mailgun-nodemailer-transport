@@ -1,11 +1,17 @@
-import { request, RequestOptions } from 'https';
+import { request as requestHttp, RequestOptions as HttpRequestOptions } from 'http';
+import { request as requestHttps, RequestOptions as HttpsRequestOptions } from 'https';
 import FormData from 'form-data';
 
 import type { IncomingMessage } from 'http';
 
-function sendRequest(options: RequestOptions, formData: FormData): Promise<string> {
+
+function sendRequest(
+  options: HttpRequestOptions | HttpsRequestOptions,
+  formData: FormData,
+  isHttpProxy=false,
+  ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const req = request(options);
+    const req = (isHttpProxy ? requestHttp : requestHttps)(options);
 
     formData.pipe(req);
 
@@ -37,9 +43,13 @@ function sendRequest(options: RequestOptions, formData: FormData): Promise<strin
   });
 }
 
-export function postForm(options: RequestOptions, formData: FormData): Promise<string> {
+export function postForm(
+  options: HttpRequestOptions | HttpsRequestOptions,
+  formData: FormData,
+  isHttpProxy=false,
+  ): Promise<string> {
   options.method = 'POST';
   options.headers = formData.getHeaders();
 
-  return sendRequest(options, formData);
+  return sendRequest(options, formData, isHttpProxy);
 }
